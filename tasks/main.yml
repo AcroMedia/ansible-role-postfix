@@ -1,0 +1,36 @@
+---
+- name: Install apt package to facilitate CLI mail delivery
+  apt:
+    name: mailutils
+    update_cache: yes
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install yum package to facilitate CLI mail delivery
+  yum:
+    name: mailx
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: Postfix should only listen on localhost
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: "^inet_interfaces"
+    line: "inet_interfaces = loopback-only"
+    state: present
+    backup: yes
+  notify:
+    - restart postfix
+
+- name: Send mail for root to a real person
+  lineinfile:
+    dest: /etc/aliases
+    regexp: "^root:"
+    line: "root: {{ default_mail_recipient }}"
+    state: present
+    backup: yes
+  when: default_mail_recipient is defined
+  notify:
+    - execute newaliases
+    - restart postfix

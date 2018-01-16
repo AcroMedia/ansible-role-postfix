@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Acro Media Inc.
+  description: Downloads mailutils (Ubuntu) / mailx (Redhat) and configures it
+  company: Acro Media Inc.
+  license: BSD
+
+  min_ansible_version: 2.0
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+    - xenial
+  - name: EL
+    versions:
+    - 6
+    - 7
+  galaxy_tags: []
+dependencies: []

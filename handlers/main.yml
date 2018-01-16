@@ -1,0 +1,8 @@
+---
+- name: execute newaliases
+  shell: newaliases
+  args:
+    chdir: /etc
+
+- name: restart postfix
+  service: name=postfix state=restarted
