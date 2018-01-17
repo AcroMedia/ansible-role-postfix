@@ -13,16 +13,6 @@
     update_cache: yes
   when: ansible_os_family == 'RedHat'
 
-- name: Postfix should only listen on localhost
-  lineinfile:
-    dest: /etc/postfix/main.cf
-    regexp: "^inet_interfaces"
-    line: "inet_interfaces = loopback-only"
-    state: present
-    backup: yes
-  notify:
-    - restart postfix
-
 - name: Send mail for root to a real person
   lineinfile:
     dest: /etc/aliases
