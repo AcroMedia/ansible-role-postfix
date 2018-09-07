@@ -1,8 +1,20 @@
 ---
 - name: execute newaliases
-  shell: newaliases
+  shell: /usr/bin/newaliases
   args:
     chdir: /etc
 
 - name: restart postfix
-  service: name=postfix state=restarted
+  service:
+    name: postfix
+    state: restarted
+
+- name: reload postfix
+  service:
+    name: postfix
+    state: reloaded
+
+- name: postmap mydomains
+  shell: /usr/sbin/postmap /etc/postfix/mydomains
+  args:
+    chdir: /etc/postfix

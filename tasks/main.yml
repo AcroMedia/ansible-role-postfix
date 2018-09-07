@@ -19,8 +19,51 @@
     regexp: "^root:"
     line: "root: {{ default_mail_recipient }}"
     state: present
-    backup: yes
+    backup: true
   when: default_mail_recipient is defined
   notify:
     - execute newaliases
+    - restart postfix
+
+- name: Make sure server's public DNS name is in /etc/postfix/mydomains (mostly used by rackspace ?)
+  lineinfile:
+    dest: /etc/postfix/mydomains
+    regexp: "^{{ inventory_hostname }}"
+    line: "{{ inventory_hostname }} OK"
+    state: present
+    backup: true
+  when: ansible_os_family == 'RedHat'
+  notify:
+    - postmap mydomains
+    - restart postfix
+  ignore_errors: true
+
+- name: Fix postfix "mydestination" value to prevent dropped mail from localhost
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^mydestination = '
+    #insertafter: '^#mydestination = '
+    line: 'mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost'
+    backup: true
+  notify: reload postfix
+  when: inventory_hostname != ansible_fqdn
+
+- name: "Fix postfix 'myhostname' value. Hint: 'postfix_myhostname' needs to be defined for this to have an effect."
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^myhostname = '
+    insertafter: '^#myhostname = '
+    line: "myhostname = {{ postfix_myhostname }}"
+    backup: true
+  notify: reload postfix
+  when: postfix_myhostname is defined
+
+- name: Set postfix to only use ipv4 @TODO - sniff networking and skip this step when the server has a usable IPv6 connection to the outside world
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: "^inet_protocols"
+    line: "inet_protocols = ipv4"
+    state: present
+    backup: true
+  notify:
     - restart postfix
