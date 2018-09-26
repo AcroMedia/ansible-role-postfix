@@ -1,0 +1,3 @@
+---
+# Debian / Ubuntu specific variables
+postfix_ca_bundle: /etc/ssl/certs/ca-certificates.crt

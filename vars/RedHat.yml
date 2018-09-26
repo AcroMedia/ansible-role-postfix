@@ -1,0 +1,3 @@
+---
+# Red Hat / CentOS specific variables
+postfix_ca_bundle: /etc/ssl/certs/ca-bundle.crt
