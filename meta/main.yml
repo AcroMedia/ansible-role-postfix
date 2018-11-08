@@ -1,16 +1,16 @@
 ---
 galaxy_info:
   author: Acro Media Inc.
-  description: Downloads mailutils (Ubuntu) / mailx (Redhat) and configures it
+  description: Install postfix so websites (and the server itself) can send out email
   company: Acro Media Inc.
-  license: BSD
-
+  license: GPLv3
   min_ansible_version: 2.0
   platforms:
   - name: Ubuntu
     versions:
     - trusty
     - xenial
+    - bionic
   - name: EL
     versions:
     - 6
