@@ -49,7 +49,7 @@
     backup: true
   notify: reload postfix
   when: inventory_hostname != ansible_fqdn
-    or when postfix_myhostname is defined
+    or postfix_myhostname is defined
 
 - name: "Fix postfix 'myhostname' value. Hint: 'postfix_myhostname' needs to be defined for this to have an effect."
   lineinfile:
