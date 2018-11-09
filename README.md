@@ -16,6 +16,9 @@ For servers that accept incoming mail:
 * postfix_tls_cert: Absolute path to the TLS public certificate
 * postfix_tls_key: Absolute path to the TLS private key
 
+For systems behind a load balancer:
+* postfix_myhostname: In some cases, ansible won't be able to figure out what to use for this, so you'll need to specify it manually
+
 ## Dependencies
 
 None
