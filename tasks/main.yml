@@ -71,6 +71,29 @@
   notify:
     - restart postfix
 
+- name: Set postfix value for "inet_interfaces"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^inet_interfaces = '
+    insertafter: '^#inet_interfaces = '
+    line: "inet_interfaces = {{ postfix_inet_interfaces }}"
+    backup: true
+  # Task only runs when the playbook sets a value for this.
+  when: postfix_inet_interfaces != ''
+  notify:
+    - restart postfix
+
+- name: Set postfix value for "mynetworks"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^mynetworks = '
+    insertafter: '^#mynetworks = '
+    line: "mynetworks = {{ postfix_mynetworks }}"
+    backup: true
+  when: postfix_mynetworks != ''
+  notify:
+    - reload postfix
+
 - name: Import TLS tasks
   import_tasks: ./tls.yml
   tags:
