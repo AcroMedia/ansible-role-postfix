@@ -1,6 +1,7 @@
 import os
 import pytest
 import testinfra.utils.ansible_runner
+import testinfra
 
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
@@ -28,14 +29,14 @@ def test_hosts_file(host):
     assert f.group == 'root'
 
 
-""" default/main.yml tests """
+""" tasks/main.yml tests """
 
 
-# def test_pkg(host):
-#     mailx = host.package('mailx')
-#     mailutils = host.package('mailutils')
-#
-#     assert mailx.is_installed | mailutils.is_installed
+def test_pkg(host):
+    mailx = host.package("mailx")
+    mailutils = host.package('mailutils')
+
+    assert mailx.is_installed or mailutils.is_installed
 
 
 @pytest.mark.parametrize('files', [
@@ -46,4 +47,4 @@ def test_alias_exists(host, files):
     [check_file(host.file(x), 'root', 'root', '0o644') for x in test_files]
 
 
-""" auth_basic/main.yml tests """
+""" tasks/tls.yml tests """

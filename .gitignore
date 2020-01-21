@@ -10,4 +10,8 @@ molecule/default/tests/__pycache__/
 .cache
 /env/
 /.tox
+# testing cache
 .pytest_cache
+# debugging log
+molecule/default/pytestdebug.log
+
