@@ -1,0 +1,62 @@
+##> tasks/main.yml
+
+- name: Send mail for root to a real person
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+=> I suspect that this is ok ...
+==> ssh into container and look at "/etc/aliases" for ""root: {{ default_mail_recipient }}""
+
+==> Question for all these: how can we make sure that the test is not skipped, or does it matter?
+ TASK [ansible-role-postfix : Fix postfix "mydestination" value to prevent dropped mail from localhost] ***
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/main.yml:53
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Fix postfix 'myhostname' value. Hint: 'postfix_myhostname' needs to be defined for this to have an effect.] ***
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/main.yml:66
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Set postfix value for "inet_interfaces"] **********
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/main.yml:76
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Set postfix value for "mynetworks"] ***************
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/main.yml:88
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Check for presence of Postfix TLS public certificate (for incoming mail)] ***
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/tls.yml:3
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Check for presence of Postfix TLS private key (for incoming mail)] ***
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/tls.yml:7
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+    TASK [ansible-role-postfix : Set postfix SMTPD (incoming mail) TLS parameters] ***
+    task path: /home/mmccann/projects/github/ansible-role-postfix/tasks/tls.yml:11
+    skipping: [instance] => {
+        "changed": false,
+        "skip_reason": "Conditional result was False"
+    }
+
+##> tasks/tls.yml
+- all of them are skipped.  How to ensure that things are written, and check the contents written each time ...?
