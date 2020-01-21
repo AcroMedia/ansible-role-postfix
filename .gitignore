@@ -1,0 +1,13 @@
+.env
+/venv/
+/dist/
+*/__pycache__
+*.pyc
+molecule/default/tests/__pycache__/
+.vscode
+*.egg*
+.idea
+.cache
+/env/
+/.tox
+.pytest_cache

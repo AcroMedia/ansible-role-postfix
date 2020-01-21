@@ -1,5 +1,6 @@
 ---
-- include_vars: "./../vars/{{ ansible_os_family }}.yml"
+- name: Include OS-specific variables.
+  include_vars: "vars/{{ ansible_os_family }}.yml"
 
 - name: Install apt package to facilitate CLI mail delivery
   apt:
@@ -27,25 +28,36 @@
     - execute newaliases
     - restart postfix
 
-- name: Make sure server's public DNS name is in /etc/postfix/mydomains (mostly used by rackspace ?)
-  lineinfile:
-    dest: /etc/postfix/mydomains
-    regexp: "^{{ inventory_hostname }}"
-    line: "{{ inventory_hostname }} OK"
-    state: present
-    backup: true
-  when: ansible_os_family == 'RedHat'
-  notify:
-    - postmap mydomains
-    - restart postfix
-  ignore_errors: true
+- name: Ansible check directory.
+  stat:
+   path: /etc/postfix
+  register: postfix_directory
+
+- name: "Create directory if it does not exist"
+  file:
+   path: /etc/postfix
+   state: directory
+   mode: 0755
+   group: root
+   owner: root
+  when: not postfix_directory.stat.exists
+
+- name: Template /etc/postfix/main.cf
+  template:
+    src: templates/etc/postfix/main.cf.j2
+    dest: /etc/postfix/main.cf
+    mode: 0644
+    owner: root
+    group: root
 
 - name: Fix postfix "mydestination" value to prevent dropped mail from localhost
   lineinfile:
     path: /etc/postfix/main.cf
     regexp: '^mydestination = '
     #insertafter: '^#mydestination = '
-    line: 'mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost'
+    line: 'mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain,
+          localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }},
+          {{ ansible_fqdn }}, localhost'
     backup: true
   notify: reload postfix
   when: inventory_hostname != ansible_fqdn
@@ -60,16 +72,6 @@
     backup: true
   notify: reload postfix
   when: postfix_myhostname is defined
-
-- name: Set postfix to only use ipv4 @TODO - sniff networking and skip this step when the server has a usable IPv6 connection to the outside world
-  lineinfile:
-    dest: /etc/postfix/main.cf
-    regexp: "^inet_protocols"
-    line: "inet_protocols = ipv4"
-    state: present
-    backup: true
-  notify:
-    - restart postfix
 
 - name: Set postfix value for "inet_interfaces"
   lineinfile:
