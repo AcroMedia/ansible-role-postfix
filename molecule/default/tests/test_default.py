@@ -45,6 +45,3 @@ def test_pkg(host):
 def test_alias_exists(host, files):
     test_files = [files]
     [check_file(host.file(x), 'root', 'root', '0o644') for x in test_files]
-
-
-""" tasks/tls.yml tests """

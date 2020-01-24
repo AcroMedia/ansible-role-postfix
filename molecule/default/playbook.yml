@@ -3,3 +3,20 @@
   hosts: all
   roles:
     - role: ansible-role-postfix
+  vars:
+    mailRecipientOverride: "{{ lookup('env', 'MAIL_RECIPIENT') }}"
+    default_mail_recipient:
+      - "{{ (mailRecipientOverride | length > 0) | \
+       ternary(mailRecipientOverride, 'webmaster@acromedia.com') }}"
+    invHostnameOverride: "{{ lookup('env', 'INV_HOSTNAME') }}"
+    inventory_hostname:
+      - "{{ (invHostnameOverride | length > 0) | \
+       ternary(invHostnameOverride, 'inventory_hostname') }}"
+    postHostnameOverride: "{{ lookup('env', 'POST_HOSTNAME') }}"
+    postfix_myhostname:
+      - "{{ (postHostnameOverride | length > 0) | \
+       ternary(postHostnameOverride, 'localhost') }}"
+    postMyNetworksOverride: "{{ lookup('env', 'POST_NETWORKS') }}"
+    postfix_mynetworks:
+      - "{{ (postMyNetworksOverride | length > 0) | \
+       ternary(postMyNetworksOverride, 'localhost') }}"

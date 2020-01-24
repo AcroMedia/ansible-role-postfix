@@ -3,6 +3,7 @@
 Install and configure postfix on an Ubuntu or Redhat server.
 
 Primarily for use in hosting environments so a website can deliver mail via 127.0.0.1.
+
 # Test Suite Setup (Molecule)
 
 - To run the whole test suite for all environments
@@ -18,10 +19,10 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip3 install 'molecule[docker]'
 $ pip3 install -r requirements.txt
-$ MOLECULE_DISTRO=centos7 molecule test
+$ MAIL_RECIPIENT='webmaster@acromedia.com' INV_HOSTNAME='inventory_hostname' POST_HOSTNAME='locahost' POST_NETWORKS='localhost' molecule test --destroy=never
 ```
 
-- note that you can substitute MOLECULE_DISTRO=version for the following:
+- note that you can substitute MOLECULE_DISTRO=version (or other prepended variables):
 
 __MOLECULE_DISTRO List__
 
@@ -41,7 +42,7 @@ __MOLECULE_DISTRO List__
 
 - if you are creating a new molecule test suite inside an existing role then execute this ...
 ```bash 
-$ molecule init scenario -r ansible-role-nginx
+$ molecule init scenario -r ansible-role-postfix
 ```
 - you can change one line and enter a different molecule command to keep the container alive
     - from the ```MOLECULE_DISTRO``` list above, substitute your desired version for development below
