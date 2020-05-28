@@ -3,7 +3,6 @@ dependency:
   name: galaxy
 driver:
   name: docker
-
 platforms:
   - name: instance
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
@@ -16,7 +15,6 @@ platforms:
       - "vm.network 'forwarded_port', guest: 80, host: 8088"
 provisioner:
   name: ansible
-
 verifier:
   name: ansible
  
