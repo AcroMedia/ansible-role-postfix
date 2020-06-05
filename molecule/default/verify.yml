@@ -1,0 +1,15 @@
+---
+- name: 
+  hosts: all
+  become: yes
+  
+  tasks:
+  - name: Check that nginx file has been created
+    stat:
+      path: /etc/nginx
+    register: stat_result
+    
+  - name: Check that alternate nginx log for use behind load balancer has been created
+    stat:
+      path: /etc/nginx/conf.d/log_format_proxied.conf
+    register: stat_result
