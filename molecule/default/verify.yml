@@ -4,12 +4,12 @@
   become: yes
   
   tasks:
-  - name: Check that nginx file has been created
+  - name: Check that postfix directory has been created
     stat:
-      path: /etc/nginx
+      path: /etc/postfix
     register: stat_result
     
-  - name: Check that alternate nginx log for use behind load balancer has been created
+  - name: Check that main.cf in postfix was created
     stat:
-      path: /etc/nginx/conf.d/log_format_proxied.conf
+      path: /etc/postfix/main.cf
     register: stat_result
