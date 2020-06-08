@@ -8,7 +8,12 @@
     - "inventory_hostname:  {{ lookup('env', 'INV_HOSTNAME') }}"
     - "postfix_myhostname:  {{ lookup('env', 'POST_HOSTNAME') }}"
     - "postfix_mynetworks:  {{ lookup('env', 'POST_NETWORKS') }}"
-
+    
+- name: Ensure postfix is installed.
+  package:
+    name: postfix
+    state: present
+    
 - name: Install apt package to facilitate CLI mail delivery
   apt:
     name: mailutils
@@ -34,30 +39,6 @@
   notify:
     - execute newaliases
     - restart postfix
-    
-- name: Check that /etc/postfix/mydomains exists
-  stat:
-    path: /etc/postfix/mydomains
-  register: mydomains_stat_result
-
-- name: Create /etc/postfix/mydomains, if it doesnt exist already
-  file:
-    path: /etc/postfix/mydomains
-    state: touch
-  when: not mydomains_stat_result.stat.exists
-
-- name: Make sure server's public DNS name is in /etc/postfix/mydomains (mostly used by rackspace ?)
-  lineinfile:
-    dest: /etc/postfix/mydomains
-    regexp: "^{{ inventory_hostname }}"
-    line: "{{ inventory_hostname }} OK"
-    state: present
-    backup: true
-  when: ansible_os_family == 'RedHat'
-  notify:
-    - postmap mydomains
-    - restart postfix
-  ignore_errors: true
 
 - name: Ansible check directory.
   stat:
@@ -72,6 +53,30 @@
    group: root
    owner: root
   when: not postfix_directory.stat.exists
+  
+- name: Check that /etc/postfix/mydomains exists
+  stat:
+    path: /etc/postfix/mydomains
+  register: mydomains_stat_result
+
+- name: Create /etc/postfix/mydomains, if it doesnt exist already
+  file:
+    path: /etc/postfix/mydomains
+    state: touch
+  when: not mydomains_stat_result.stat.exists
+  
+- name: Make sure server's public DNS name is in /etc/postfix/mydomains (mostly used by rackspace ?)
+  lineinfile:
+    dest: /etc/postfix/mydomains
+    regexp: "^{{ inventory_hostname }}"
+    line: "{{ inventory_hostname }} OK"
+    state: present
+    backup: true
+  when: ansible_os_family == 'RedHat'
+  notify:
+    - postmap mydomains
+    - restart postfix
+  ignore_errors: true
 
 - name: Template /etc/postfix/main.cf
   template:
@@ -137,10 +142,10 @@
   notify:
     - reload postfix
     
-- name: Reload the daemon
-  systemd:
-    daemon_reload: yes
-
+#- name: ensure postfix is running
+#  service: name=postfix state=started
+#  become: yes    
+    
 - name: Import TLS tasks
   import_tasks: ./tls.yml
   tags:
