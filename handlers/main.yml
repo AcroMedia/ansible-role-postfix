@@ -3,12 +3,17 @@
   shell: /usr/bin/newaliases
   args:
     chdir: /etc
+    
+- name: Reload the daemon
+  systemd:
+    daemon_reload: yes
 
 - name: restart postfix
   service:
     name: postfix
+    enabled: true
     state: restarted
-
+    
 - name: reload postfix
   service:
     name: postfix

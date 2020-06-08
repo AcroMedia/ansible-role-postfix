@@ -15,5 +15,3 @@ platforms:
       - "vm.network 'forwarded_port', guest: 80, host: 8088"
 provisioner:
   name: ansible
-verifier:
-  name: ansible

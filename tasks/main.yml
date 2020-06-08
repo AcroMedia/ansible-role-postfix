@@ -34,6 +34,17 @@
   notify:
     - execute newaliases
     - restart postfix
+    
+- name: Check that /etc/postfix/mydomains exists
+  stat:
+    path: /etc/postfix/mydomains
+  register: mydomains_stat_result
+
+- name: Create /etc/postfix/mydomains, if it doesnt exist already
+  file:
+    path: /etc/postfix/mydomains
+    state: touch
+  when: not mydomains_stat_result.stat.exists
 
 - name: Make sure server's public DNS name is in /etc/postfix/mydomains (mostly used by rackspace ?)
   lineinfile:
@@ -125,6 +136,10 @@
   when: postfix_mynetworks != ''
   notify:
     - reload postfix
+    
+- name: Reload the daemon
+  systemd:
+    daemon_reload: yes
 
 - name: Import TLS tasks
   import_tasks: ./tls.yml
