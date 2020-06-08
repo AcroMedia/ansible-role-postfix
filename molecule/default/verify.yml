@@ -1,0 +1,15 @@
+---
+- name: 
+  hosts: all
+  become: yes
+  
+  tasks:
+  - name: Check that postfix directory has been created
+    stat:
+      path: /etc/postfix
+    register: stat_result
+    
+  - name: Check that main.cf in postfix was created
+    stat:
+      path: /etc/postfix/main.cf
+    register: stat_result
