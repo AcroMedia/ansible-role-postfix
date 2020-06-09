@@ -141,11 +141,7 @@
   when: postfix_mynetworks != ''
   notify:
     - reload postfix
-    
-#- name: ensure postfix is running
-#  service: name=postfix state=started
-#  become: yes    
-    
+          
 - name: Import TLS tasks
   import_tasks: ./tls.yml
   tags:

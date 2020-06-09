@@ -13,9 +13,7 @@
       - "{{ (invHostnameOverride | length > 0) | \
        ternary(invHostnameOverride, 'inventory_hostname') }}"
     postHostnameOverride: "{{ lookup('env', 'POST_HOSTNAME') }}"
-    postfix_myhostname:
-      - "{{ (postHostnameOverride | length > 0) | \
-       ternary(postHostnameOverride, 'localhost') }}"
+    postfix_myhostname: "{{ postHostnameOverride if postHostnameOverride != '' else 'localhost' }}"
     postMyNetworksOverride: "{{ lookup('env', 'POST_NETWORKS') }}"
     postfix_mynetworks:
       - "{{ (postMyNetworksOverride | length > 0) | \
