@@ -104,7 +104,7 @@
     path: /etc/postfix/main.cf
     regexp: '^myhostname = '
     insertafter: '^#myhostname = '
-    line: "myhostname = {{ postfix_myhostname }}"
+    line: "myhostname = localhost"
     backup: true
   notify: reload postfix
   when: postfix_myhostname is defined
