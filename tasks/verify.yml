@@ -1,0 +1,17 @@
+---
+    - name: Check that postfix directory exists
+      stat:
+        path: /etc/postfix
+      register: postfix_directory
+    
+    - name: Check that /etc/postfix/mydomains exists
+      stat:
+        path: /etc/postfix/mydomains
+      register: mydomains_stat_result
+  
+    - name: Ensure postfix is started and enabled on boot
+      service:
+        name: postfix
+        state: started
+        enabled: true
+

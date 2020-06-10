@@ -146,3 +146,8 @@
   import_tasks: ./tls.yml
   tags:
     - tls
+
+- name: Import verification tasks
+  import_tasks: ./verify.yml
+  tags:
+    - verify
