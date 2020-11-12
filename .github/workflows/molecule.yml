@@ -18,7 +18,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          sudo apt install docker
+          pip3 install molecule-docker
       - name: Test with molecule
         run: |
           molecule test
