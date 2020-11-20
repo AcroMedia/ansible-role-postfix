@@ -42,4 +42,5 @@ jobs:
         with:
           image: "${{ matrix.image }}"
           options: parallel
-        MOLECULE_DOCKER_IMAGE: "${{ matrix.image }}"
+        env:
+          MOLECULE_DOCKER_IMAGE: "${{ matrix.image }}"
