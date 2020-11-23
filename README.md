@@ -1,5 +1,7 @@
 # Ansible role: Postfix
 
+![.github/workflows/molecule.yml](https://github.com/AcroMedia/ansible-role-postfix/workflows/.github/workflows/molecule.yml/badge.svg)
+
 Install and configure postfix on an Ubuntu or Redhat server.
 
 Primarily for use in hosting environments so a website can deliver mail via 127.0.0.1.
