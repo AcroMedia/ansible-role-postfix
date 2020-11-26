@@ -1,7 +1,7 @@
 ---
 - include_vars: "./../vars/{{ ansible_os_family }}.yml"
 
-- name: Install apt package to facilitate CLI mail delivery
+- name: Install apt package to facilitate CLI mail delivery (includes postfix)
   apt:
     name: mailutils
     update_cache: yes
@@ -10,7 +10,9 @@
 
 - name: Install yum package to facilitate CLI mail delivery
   yum:
-    name: mailx
+    name:
+      - mailx
+      - postfix
     state: present
     update_cache: yes
   when: ansible_os_family == 'RedHat'
