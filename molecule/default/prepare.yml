@@ -1,0 +1,36 @@
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: yes
+  tasks:
+    - name: Update apt cache (debian)
+      apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Update yum cache (redhat)
+      yum:
+        update_cache: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Make sure rsyslog is present (debian + redhat)
+      package:
+        name: rsyslog
+        state: present
+
+    - name: Make sure rsyslog is running (redhat)
+      service:
+        name: rsyslog
+        state: started
+      when: ansible_os_family == 'RedHat'
+
+    - name: Make sure syslog is running (debian)
+      service:
+        name: syslog
+        state: started
+      when: ansible_os_family == 'Debian'
+
+    - name: Install netstat utility so we can test ports (provided by net-tools on Debian + RedHat)
+      package:
+        name:
+          - net-tools

@@ -2,11 +2,11 @@
 - name: Converge
   hosts: all
   become: true
+  gather_facts: true
 
-  pre_tasks:
-    - name: Update apt cache.
-      apt: update_cache=true cache_valid_time=600
-      when: ansible_os_family == 'Debian'
+  vars:
+    default_mail_recipient: nobody@example.com
+    postfix_inet_interfaces: 127.0.0.1
 
   roles:
     - role: ansible-role-postfix

@@ -2,8 +2,14 @@
 - name: Check whether packages are installed
   hosts: all
   become: yes
-
+  gather_facts: yes
+  vars:
+    vrfy_maillog_path_families:
+      RedHat: /var/log/maillog
+      Debian: /var/log/mail.log
   tasks:
+    - set_fact:
+        vrfy_maillog_path: "{{ vrfy_maillog_path_families[ansible_os_family] }}"
     - name: Gather package facts
       package_facts:
         manager: auto
@@ -21,3 +27,31 @@
       with_items:
         - mailutils
       when: ansible_os_family == 'Redhat'
+
+    - name: Collect netstat
+      command: >
+        netstat -tlpn
+      register: netstat_result
+
+    - name: Verify postfix is listening on port 25
+      assert:
+        that:
+          - netstat_result.stdout | regex_search('tcp.*(127|0)\.0\.0\.(1|0):25.*LISTEN.*\/master\s+')
+
+    - name: Send test mail
+      command: >
+        echo "" | mail -s "test from molecule" nobody@example.com
+
+    - name: Find mail attempt in logs
+      command: >
+        grep nobody@example.com {{ vrfy_maillog_path }}
+      register: mail_log_result
+
+    - name: Show mail log output to humans
+      debug:
+        var: mail_log_result
+
+    - name: Verify delivery attempt from logs
+      assert:
+        that:
+          - mail_log_result.stdout | regex_search('.*status=(bounced|sent|deferred).*')
