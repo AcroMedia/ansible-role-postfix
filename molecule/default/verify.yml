@@ -38,20 +38,35 @@
         that:
           - netstat_result.stdout | regex_search('tcp.*(127|0)\.0\.0\.(1|0):25.*LISTEN.*\/master\s+')
 
-    - name: Send test mail
-      command: >
-        echo "" | mail -s "test from molecule" nobody@example.com
+    - set_fact:
+        vrfy_random_string: "{{ lookup('password', '/dev/null length=8 chars=ascii_letters') }}"
 
-    - name: Find mail attempt in logs
+    - set_fact:
+        vrfy_recipient: "nobody+{{ vrfy_random_string }}@example.com"
+
+    - name: Verify that postfix accepts mail from the command line
       command: >
-        grep nobody@example.com {{ vrfy_maillog_path }}
+        swaks --to {{ vrfy_recipient }} --from root@localhost --server 127.0.0.1
+      register: swaks_output
+
+    - name: Show swaks output to a human
+      debug:
+        var: swaks_output
+
+    - name: Wait a few seconds for the outgoing mail attempt to get logged by postfix
+      pause:
+        seconds: 6   # This number is pretty arbitrary
+
+    - name: Find outgoing mail attempt in logs
+      shell: >
+        grep status= {{ vrfy_maillog_path }} | grep "{{ vrfy_recipient }}"
       register: mail_log_result
 
     - name: Show mail log output to humans
       debug:
         var: mail_log_result
 
-    - name: Verify delivery attempt from logs
+    - name: Verify an outgoing delivery attempt from logs
       assert:
         that:
           - mail_log_result.stdout | regex_search('.*status=(bounced|sent|deferred).*')

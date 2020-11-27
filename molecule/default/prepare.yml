@@ -30,7 +30,8 @@
         state: started
       when: ansible_os_family == 'Debian'
 
-    - name: Install netstat utility so we can test ports (provided by net-tools on Debian + RedHat)
+    - name: Install utilities that support the "verify" stage
       package:
         name:
           - net-tools
+          - swaks
