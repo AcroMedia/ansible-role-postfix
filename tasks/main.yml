@@ -1,7 +1,7 @@
 ---
 - include_vars: "./../vars/{{ ansible_os_family }}.yml"
 
-- name: Install apt package to facilitate CLI mail delivery
+- name: Install apt package to facilitate CLI mail delivery (includes postfix)
   apt:
     name: mailutils
     update_cache: yes
@@ -10,10 +10,30 @@
 
 - name: Install yum package to facilitate CLI mail delivery
   yum:
-    name: mailx
+    name:
+      - mailx
+      - postfix
     state: present
     update_cache: yes
   when: ansible_os_family == 'RedHat'
+
+- name: Set postfix value for "inet_interfaces"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^inet_interfaces = '
+    insertafter: '^#inet_interfaces = '
+    line: "inet_interfaces = {{ postfix_inet_interfaces }}"
+    backup: true
+  # Task only runs when the playbook sets a value for this.
+  when: postfix_inet_interfaces != ''
+  notify:
+    - restart postfix
+
+- name: Make sure postfix is started + enabled
+  service:
+    name: postfix
+    state: started
+    enabled: true
 
 - name: Send mail for root to a real person
   lineinfile:
@@ -71,17 +91,7 @@
   notify:
     - restart postfix
 
-- name: Set postfix value for "inet_interfaces"
-  lineinfile:
-    path: /etc/postfix/main.cf
-    regexp: '^inet_interfaces = '
-    insertafter: '^#inet_interfaces = '
-    line: "inet_interfaces = {{ postfix_inet_interfaces }}"
-    backup: true
-  # Task only runs when the playbook sets a value for this.
-  when: postfix_inet_interfaces != ''
-  notify:
-    - restart postfix
+
 
 - name: Set postfix value for "mynetworks"
   lineinfile:

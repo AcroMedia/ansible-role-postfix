@@ -5,7 +5,7 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2004}-ansible:latest"
+    image: ${MOLECULE_DOCKER_IMAGE:-'geerlingguy/docker-ubuntu1804-ansible:latest'}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -15,3 +15,6 @@ provisioner:
   name: ansible
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+  config_options:
+    defaults:
+      verbosity: ${MOLECULE_VERBOSITY:-0}

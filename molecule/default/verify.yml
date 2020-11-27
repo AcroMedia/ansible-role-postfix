@@ -1,0 +1,72 @@
+---
+- name: Check whether packages are installed
+  hosts: all
+  become: yes
+  gather_facts: yes
+  vars:
+    vrfy_maillog_path_families:
+      RedHat: /var/log/maillog
+      Debian: /var/log/mail.log
+  tasks:
+    - set_fact:
+        vrfy_maillog_path: "{{ vrfy_maillog_path_families[ansible_os_family] }}"
+    - name: Gather package facts
+      package_facts:
+        manager: auto
+
+    - name: Verify Packages
+      assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      with_items:
+        - mailutils
+      when: ansible_os_family == 'Debian'
+
+    - name: Verify Packages
+      assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      with_items:
+        - mailutils
+      when: ansible_os_family == 'Redhat'
+
+    - name: Collect netstat
+      command: >
+        netstat -tlpn
+      register: netstat_result
+
+    - name: Verify postfix is listening on port 25
+      assert:
+        that:
+          - netstat_result.stdout | regex_search('tcp.*(127|0)\.0\.0\.(1|0):25.*LISTEN.*\/master\s+')
+
+    - set_fact:
+        vrfy_random_string: "{{ lookup('password', '/dev/null length=8 chars=ascii_letters') }}"
+
+    - set_fact:
+        vrfy_recipient: "nobody+{{ vrfy_random_string }}@example.com"
+
+    - name: Verify that postfix accepts mail from the command line
+      command: >
+        swaks --to {{ vrfy_recipient }} --from root@localhost --server 127.0.0.1
+      register: swaks_output
+
+    - name: Show swaks output to a human
+      debug:
+        var: swaks_output
+
+    - name: Wait a few seconds for the outgoing mail attempt to get logged by postfix
+      pause:
+        seconds: 6   # This number is pretty arbitrary
+
+    - name: Find outgoing mail attempt in logs
+      shell: >
+        grep status= {{ vrfy_maillog_path }} | grep "{{ vrfy_recipient }}"
+      register: mail_log_result
+
+    - name: Show mail log output to humans
+      debug:
+        var: mail_log_result
+
+    - name: Verify an outgoing delivery attempt from logs
+      assert:
+        that:
+          - mail_log_result.stdout | regex_search('.*status=(bounced|sent|deferred).*')
