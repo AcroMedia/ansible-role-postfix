@@ -6,3 +6,9 @@ postfix_inet_interfaces: ''
 # Default mynetworks for ubuntu 18: "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128"
 # Default mynetworks for red hat 6: "127.0.0.0/8"
 postfix_mynetworks: ''
+
+# Relayhost is normally not needed. By itself, it's probably not enough for any
+# kind of production use, or 'smart' relaying. This option was simply added so we
+# could blindly redirect all outbound mail to a local instance of Mailhog,
+# which is handled by a separate role.
+postfix_relayhost: ''

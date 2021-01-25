@@ -91,7 +91,15 @@
   notify:
     - restart postfix
 
-
+- name: Set postfix value for "relayhost"
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: "^relayhost = "
+    line: "relayhost = {{ postfix_relayhost }}"
+    state: present
+    backup: true
+  notify:
+    - restart postfix
 
 - name: Set postfix value for "mynetworks"
   lineinfile:
