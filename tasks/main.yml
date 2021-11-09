@@ -116,3 +116,15 @@
   import_tasks: ./tls.yml
   tags:
     - tls
+
+- name: Upload the watcher path systemd template
+  template:
+    src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.path.j2"
+    dest: "/etc/systemd/system/etc-resolv-conf-watcher.path"
+    mode: '0644'
+
+- name: Upload the watcher path systemd template
+  template:
+    src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.service.j2"
+    dest: "/etc/systemd/system/etc-resolv-conf-watcher.service"
+    mode: '0644'
