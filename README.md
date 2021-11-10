@@ -27,6 +27,7 @@ Tweaks: These only get applied if your playbook specifies them. Otherwise, the d
 * postfix_inet_interfaces: Defaults to "all" on debian, and "localhost" on red hat.
 * postfix_mynetworks: Default for both OS's is only to trust localhost.
 
+* Set 'enable_resolv_conf_watcher' to 'true' if postfix is having issues with resolving DNS.
 
 ## Dependencies
 
