@@ -122,16 +122,14 @@
     src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.path.j2"
     dest: "/etc/systemd/system/etc-resolv-conf-watcher.path"
     mode: '0644'
-  when: enable_resolv_conf_watcher is defined
-    and (enable_resolv_conf_watcher|bool == true)
+  when: enable_resolv_conf_watcher
 
 - name: Upload the watcher service systemd template
   template:
     src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.service.j2"
     dest: "/etc/systemd/system/etc-resolv-conf-watcher.service"
     mode: '0644'
-  when: enable_resolv_conf_watcher is defined
-    and (enable_resolv_conf_watcher|bool == true)
+  when: enable_resolv_conf_watcher
 
 - name: Enable the watcher path
   systemd:
@@ -139,8 +137,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
-  when: enable_resolv_conf_watcher is defined
-    and (enable_resolv_conf_watcher|bool == true)
+  when: enable_resolv_conf_watcher
 
 - name: Enable the watcher service
   systemd:
@@ -148,5 +145,4 @@
     state: started
     enabled: yes
     daemon_reload: yes
-  when: enable_resolv_conf_watcher is defined
-    and (enable_resolv_conf_watcher|bool == true)
+  when: enable_resolv_conf_watcher

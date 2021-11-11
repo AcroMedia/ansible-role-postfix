@@ -12,3 +12,6 @@ postfix_mynetworks: ''
 # could blindly redirect all outbound mail to a local instance of Mailhog,
 # which is handled by a separate role.
 postfix_relayhost: ''
+
+# Set this to true if postfix is having issues in resolving DNS.
+enable_resolv_conf_watcher: false

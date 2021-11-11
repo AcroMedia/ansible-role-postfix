@@ -2,5 +2,3 @@
 # Debian / Ubuntu specific variables
 postfix_ca_bundle: /etc/ssl/certs/ca-certificates.crt
 
-# Uncomment this if postfix is having issues in resolving DNS.
-enable_resolv_conf_watcher: false
