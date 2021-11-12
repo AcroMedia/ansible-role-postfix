@@ -2,6 +2,8 @@
   hosts: all
   become: true
   gather_facts: yes
+  vars:
+    enable_resolv_conf_watcher: true
   tasks:
     - name: Update apt cache (debian)
       apt:

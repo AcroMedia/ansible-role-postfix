@@ -135,7 +135,7 @@
   systemd:
     name: etc-resolv-conf-watcher.path
     state: started
-    enabled: yes
+    enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
     daemon_reload: yes
   when: enable_resolv_conf_watcher
 
@@ -143,6 +143,6 @@
   systemd:
     name: etc-resolv-conf-watcher.service
     state: started
-    enabled: yes
+    enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
     daemon_reload: yes
   when: enable_resolv_conf_watcher
