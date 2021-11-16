@@ -123,6 +123,7 @@
     dest: "/etc/systemd/system/etc-resolv-conf-watcher.path"
     mode: '0644'
   when: enable_resolv_conf_watcher
+  register: path_template_result
 
 - name: Upload the watcher service systemd template
   template:
@@ -130,6 +131,7 @@
     dest: "/etc/systemd/system/etc-resolv-conf-watcher.service"
     mode: '0644'
   when: enable_resolv_conf_watcher
+  register: service_template_result
 
 - name: Enable the watcher path
   systemd:
@@ -138,6 +140,8 @@
     enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
     daemon_reload: yes
   when: enable_resolv_conf_watcher
+    and path_template_result is defined
+    and path_template_result.changed
 
 - name: Enable the watcher service
   systemd:
@@ -146,3 +150,5 @@
     enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
     daemon_reload: yes
   when: enable_resolv_conf_watcher
+    and service_template_result is defined
+    and service_template_result.changed
