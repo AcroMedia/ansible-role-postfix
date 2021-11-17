@@ -77,7 +77,7 @@
 
     - name: Verify Syslog output
       shell: >
-        grep {{ vrfy_syslog}}
+       grep 'Starting etc resolv.conf Watcher.*' {{ vrfy_syslog }}
       register: sys_log_result
 
     - name: Show sys log output to humans
