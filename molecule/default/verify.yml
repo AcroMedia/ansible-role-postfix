@@ -7,10 +7,13 @@
     vrfy_maillog_path_families:
       RedHat: /var/log/maillog
       Debian: /var/log/mail.log
+    vrfy_syslog_path_families:
+      RedHat: /var/log/messages
+      Debian: /var/log/syslog
   tasks:
     - set_fact:
         vrfy_maillog_path: "{{ vrfy_maillog_path_families[ansible_os_family] }}"
-        vrfy_syslog: /var/log/syslog
+        vrfy_syslog: "{{ vrfy_syslog_path_families[ansible_os_family] }}"
     - name: Gather package facts
       package_facts:
         manager: auto
