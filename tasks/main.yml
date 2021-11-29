@@ -152,3 +152,19 @@
   when: enable_resolv_conf_watcher
     and service_template_result is defined
     and service_template_result.changed
+
+- name: populate service facts
+  service_facts:
+
+- debug:
+    var: ansible_facts.services['etc-resolv-conf-watcher.service']
+
+#- name: Disable the watcher service
+ # systemd:
+  #  name: etc-resolv-conf-watcher.service
+   # state: 'stopped'
+    #enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
+    #daemon_reload: yes
+  #when: not enable_resolv_conf_watcher
+    #and service_status.stat.exists
+  #register: service_stopped
