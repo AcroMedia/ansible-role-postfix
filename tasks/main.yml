@@ -117,54 +117,7 @@
   tags:
     - tls
 
-- name: Upload the watcher path systemd template
-  template:
-    src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.path.j2"
-    dest: "/etc/systemd/system/etc-resolv-conf-watcher.path"
-    mode: '0644'
-  when: enable_resolv_conf_watcher
-  register: path_template_result
-
-- name: Upload the watcher service systemd template
-  template:
-    src : "../templates/etc/systemd/system/etc-resolv-conf-watcher.service.j2"
-    dest: "/etc/systemd/system/etc-resolv-conf-watcher.service"
-    mode: '0644'
-  when: enable_resolv_conf_watcher
-  register: service_template_result
-
-- name: Enable the watcher path
-  systemd:
-    name: etc-resolv-conf-watcher.path
-    state: '{{ enable_resolv_conf_watcher | ternary("started", "stopped") }}'
-    enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
-    daemon_reload: yes
-  when: enable_resolv_conf_watcher
-    and path_template_result is defined
-    and path_template_result.changed
-
-- name: Enable the watcher service
-  systemd:
-    name: etc-resolv-conf-watcher.service
-    state: '{{ enable_resolv_conf_watcher | ternary("started", "stopped") }}'
-    enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
-    daemon_reload: yes
-  when: enable_resolv_conf_watcher
-    and service_template_result is defined
-    and service_template_result.changed
-
-- name: populate service facts
-  service_facts:
-
-- debug:
-    var: ansible_facts.services['etc-resolv-conf-watcher.service']
-
-#- name: Disable the watcher service
- # systemd:
-  #  name: etc-resolv-conf-watcher.service
-   # state: 'stopped'
-    #enabled: '{{ enable_resolv_conf_watcher | ternary("true", "false") }}'
-    #daemon_reload: yes
-  #when: not enable_resolv_conf_watcher
-    #and service_status.stat.exists
-  #register: service_stopped
+- name: Enable or disable watcher service
+  import_tasks: ./watcher.yml
+  tags:
+    - watcher
