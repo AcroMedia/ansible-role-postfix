@@ -7,6 +7,7 @@
   vars:
     default_mail_recipient: nobody@example.com
     postfix_inet_interfaces: 127.0.0.1
+    enable_resolv_conf_watcher: true
 
   roles:
     - role: ansible-role-postfix

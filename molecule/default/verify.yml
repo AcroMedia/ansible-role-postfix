@@ -7,9 +7,13 @@
     vrfy_maillog_path_families:
       RedHat: /var/log/maillog
       Debian: /var/log/mail.log
+    vrfy_syslog_path_families:
+      RedHat: /var/log/messages
+      Debian: /var/log/syslog
   tasks:
     - set_fact:
         vrfy_maillog_path: "{{ vrfy_maillog_path_families[ansible_os_family] }}"
+        vrfy_syslog: "{{ vrfy_syslog_path_families[ansible_os_family] }}"
     - name: Gather package facts
       package_facts:
         manager: auto
@@ -70,3 +74,17 @@
       assert:
         that:
           - mail_log_result.stdout | regex_search('.*status=(bounced|sent|deferred).*')
+
+    - name: Verify Syslog output
+      shell: >
+       grep 'Starting etc resolv.conf Watcher.*' {{ vrfy_syslog }}
+      register: sys_log_result
+
+    - name: Show sys log output to humans
+      debug:
+        var: sys_log_result
+
+    - name: Verify if watcher is started
+      assert:
+        that:
+          - sys_log_result.stdout | regex_search('Starting etc resolv.conf Watcher.*')

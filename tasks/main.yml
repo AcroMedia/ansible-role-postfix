@@ -116,3 +116,8 @@
   import_tasks: ./tls.yml
   tags:
     - tls
+
+- name: Enable or disable watcher service
+  import_tasks: ./watcher.yml
+  tags:
+    - watcher

@@ -1,5 +1,7 @@
 ---
 galaxy_info:
+  role_name: postfix  # if absent directory name hosting role is used instead
+  namespace: acromedia  # if absent, author is used instead
   author: Acro Media Inc.
   description: Install postfix so websites (and the server itself) can send out email
   company: Acro Media Inc.
