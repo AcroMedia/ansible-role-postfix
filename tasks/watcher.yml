@@ -26,6 +26,15 @@
         and path_template_result is defined
         and path_template_result.changed
 
+    - name: Enable the watcher service
+      systemd:
+        name: etc-resolv-conf-watcher.service
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      when: enable_resolv_conf_watcher
+        and service_template_result is defined
+        and service_template_result.changed
   when:
     enable_resolv_conf_watcher is true
 
