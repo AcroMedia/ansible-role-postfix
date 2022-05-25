@@ -20,7 +20,7 @@
 - name: Set postfix value for "inet_interfaces"
   lineinfile:
     path: /etc/postfix/main.cf
-    regexp: '^inet_interfaces = '
+    regexp: '^inet_interfaces[ ]*=[ ]*'
     insertafter: '^#inet_interfaces = '
     line: "inet_interfaces = {{ postfix_inet_interfaces }}"
     backup: true
@@ -63,7 +63,7 @@
 - name: Fix postfix "mydestination" value to prevent dropped mail from localhost
   lineinfile:
     path: /etc/postfix/main.cf
-    regexp: '^mydestination = '
+    regexp: '^mydestination[ ]*=[ ]*'
     #insertafter: '^#mydestination = '
     line: 'mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost'
     backup: true
@@ -74,7 +74,7 @@
 - name: "Fix postfix 'myhostname' value. Hint: 'postfix_myhostname' needs to be defined for this to have an effect."
   lineinfile:
     path: /etc/postfix/main.cf
-    regexp: '^myhostname = '
+    regexp: '^myhostname[ ]*=[ ]*'
     insertafter: '^#myhostname = '
     line: "myhostname = {{ postfix_myhostname }}"
     backup: true
@@ -94,7 +94,7 @@
 - name: Set postfix value for "relayhost"
   lineinfile:
     dest: /etc/postfix/main.cf
-    regexp: "^relayhost = "
+    regexp: '^relayhost[ ]*=[ ]*'
     line: "relayhost = {{ postfix_relayhost }}"
     state: present
     backup: true
@@ -104,7 +104,7 @@
 - name: Set postfix value for "mynetworks"
   lineinfile:
     path: /etc/postfix/main.cf
-    regexp: '^mynetworks = '
+    regexp: '^mynetworks[ ]*=[ ]*'
     insertafter: '^#mynetworks = '
     line: "mynetworks = {{ postfix_mynetworks }}"
     backup: true

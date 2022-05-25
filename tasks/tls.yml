@@ -11,7 +11,7 @@
     - name: Set postfix SMTPD (incoming mail) TLS parameters
       lineinfile:
         path: /etc/postfix/main.cf
-        regexp: '^#?{{ item.name }} = '
+        regexp: '^#?{{ item.name }}[ ]*=[ ]*'
         line: "{{ item.name }} = {{ item.value }}"
         state: present
         backup: true
@@ -38,7 +38,7 @@
     - name: Set postfix SMTP (outgoing mail) TLS parameters
       lineinfile:
         path: /etc/postfix/main.cf
-        regexp: '^#?{{ item.name }} = '
+        regexp: '^#?{{ item.name }}[ ]*=[ ]*'
         line: "{{ item.name }} = {{ item.value }}"
         state: present
         backup: true
