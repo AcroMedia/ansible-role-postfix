@@ -65,6 +65,10 @@
   ignore_errors: true  # Obviously, this will fail if the server is not in AWS
   register: ec2_facts_result
 
+- name: Debug ec2_facts_result
+  debug:
+    var: ec2_facts_result
+
 - name: Set value for mydestination when ec2 facts are available
   set_fact:
     _postfix_mydestination_line: >
