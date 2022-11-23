@@ -60,12 +60,36 @@
     - restart postfix
   ignore_errors: true
 
+- name: Gather EC2 facts
+  ec2_metadata_facts:
+  ignore_errors: true  # Obviously, this will fail if the server is not in AWS
+  register: ec2_facts_result
+
+- name: Debug ec2_facts_result
+  debug:
+    var: ec2_facts_result
+
+- name: Set value for mydestination when ec2 facts are available
+  set_fact:
+    _postfix_mydestination_line: >
+      mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ ansible_ec2_local_hostname }}, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost
+  when: (not ec2_facts_result.failed)
+    and ec2_facts_result.ansible_facts is defined
+    and 'ansible_ec2_local_hostname' in ec2_facts_result.ansible_facts
+  # Just because ec2_facts works, doesn't mean the variable we want will actually be in the list.
+
+- name: Set value for mydestination when ec2 facts are not available
+  set_fact:
+    _postfix_mydestination_line: >
+      mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost
+  when: _postfix_mydestination_line is not defined
+
 - name: Fix postfix "mydestination" value to prevent dropped mail from localhost
   lineinfile:
     path: /etc/postfix/main.cf
     regexp: '^mydestination[ ]*=[ ]*'
     #insertafter: '^#mydestination = '
-    line: 'mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost'
+    line: "{{ _postfix_mydestination_line }}"
     backup: true
   notify: reload postfix
   when: inventory_hostname != ansible_fqdn
