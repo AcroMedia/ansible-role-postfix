@@ -71,7 +71,8 @@
 
 - name: Use manually specified value for "mydestination"
   set_fact:
-    _postfix_mydestination_line: "{{ postfix_mydestination }}"
+    _postfix_mydestination_line: > 
+      mydestination = {{ postfix_mydestination }}
   when: postfix_mydestination != ''
 
 - name: Set value for mydestination when ec2 facts are available and postfix_mydestination is not set.
@@ -130,6 +131,16 @@
     regexp: '^relayhost[ ]*=[ ]*'
     line: "relayhost = {{ postfix_relayhost }}"
     state: present
+    backup: true
+  notify:
+    - restart postfix
+
+- name: Set postfix value for "relay_domains"
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: '^relay_domains[ ]*=[ ]*'
+    line: "relay_domains = {{ postfix_relay_domains }}"
+    state: "{{ 'present' if postfix_relay_domains != '' else 'absent' }}"
     backup: true
   notify:
     - restart postfix
