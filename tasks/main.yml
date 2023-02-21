@@ -69,22 +69,30 @@
   debug:
     var: ec2_facts_result
 
-- name: Set value for mydestination when ec2 facts are available
+- name: Use manually specified value for "mydestination"
+  set_fact:
+    _postfix_mydestination_line: "{{ postfix_mydestination }}"
+  when: postfix_mydestination != ''
+
+- name: Set value for mydestination when ec2 facts are available and postfix_mydestination is not set.
   set_fact:
     _postfix_mydestination_line: >
       mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ ansible_ec2_local_hostname }}, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost
   when: (not ec2_facts_result.failed)
     and ec2_facts_result.ansible_facts is defined
     and 'ansible_ec2_local_hostname' in ec2_facts_result.ansible_facts
+    and postfix_mydestination == ''
   # Just because ec2_facts works, doesn't mean the variable we want will actually be in the list.
 
-- name: Set value for mydestination when ec2 facts are not available
+- name: Set value for mydestination when ec2 facts are not available, and postfix_mydestination is not set.
   set_fact:
     _postfix_mydestination_line: >
       mydestination = $myhostname, $myhostname.$mydomain, localhost.$mydomain, localhost.localdomain, {{ inventory_hostname }}, {{ inventory_hostname_short }}, {{ ansible_fqdn }}, ,localhost
   when: _postfix_mydestination_line is not defined
+    and postfix_mydestination == ''
 
-- name: Fix postfix "mydestination" value to prevent dropped mail from localhost
+- name: Configure postfix "mydestination" value to prevent dropped mail from localhost. The role's auto value for this should work 
+    in most cases. If mail from localhost is being dropped, consider setting the role's value for "postfix_myhostname".
   lineinfile:
     path: /etc/postfix/main.cf
     regexp: '^mydestination[ ]*=[ ]*'
@@ -94,6 +102,7 @@
   notify: reload postfix
   when: inventory_hostname != ansible_fqdn
     or postfix_myhostname is defined
+    or postfix_mydestination != ''
 
 - name: "Fix postfix 'myhostname' value. Hint: 'postfix_myhostname' needs to be defined for this to have an effect."
   lineinfile:

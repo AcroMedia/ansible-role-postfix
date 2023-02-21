@@ -15,3 +15,6 @@ postfix_relayhost: ''
 
 # Set this to true if postfix is having issues in resolving DNS.
 enable_resolv_conf_watcher: false
+
+# Leave blank to let the playbook figure this out from the environment.
+postfix_mydestination: ''
