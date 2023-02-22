@@ -18,3 +18,10 @@
   shell: /usr/sbin/postmap /etc/postfix/mydomains
   args:
     chdir: /etc/postfix
+
+- name: postmap transport
+  shell: /usr/sbin/postmap /etc/postfix/transport
+  args:
+    chdir: /etc/postfix
+  notify:
+    - restart postfix

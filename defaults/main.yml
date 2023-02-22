@@ -12,7 +12,15 @@ postfix_mynetworks: ''
 # could blindly redirect all outbound mail to a local instance of Mailhog,
 # which is handled by a separate role.
 postfix_relayhost: ''
+
+# Whether using relayhost or transport map, you should specify a list of relayable domains.
 postfix_relay_domains: ''
+
+# Transport lets you override relayhost for specific domains, or you can use this
+# instead of relayhost if you need finer grained control.
+# Format:
+#   - 'domain1.com smtp:xx.xx.xx.xx:port'
+postfix_transport_maps: []
 
 # Set this to true if postfix is having issues in resolving DNS.
 enable_resolv_conf_watcher: false

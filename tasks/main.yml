@@ -130,7 +130,25 @@
     dest: /etc/postfix/main.cf
     regexp: '^relayhost[ ]*=[ ]*'
     line: "relayhost = {{ postfix_relayhost }}"
-    state: present
+    state: "{{ 'present' if postfix_relayhost != '' else 'absent' }}"
+    backup: true
+  notify:
+    - restart postfix
+
+- name: Create postfix transport_maps file
+  template:
+    src: ../templates/etc/postfix/transport.j2
+    dest: /etc/postfix/transport
+  notify:
+    - postmap transport
+  when: (postfix_transport_maps | length) > 0
+
+- name: Override default postfix relay host for specific domains or addresses
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: "^transport_maps[ ]*=[ ]*"
+    line: transport_maps = hash:/etc/postfix/transport
+    state: "{{ 'present' if (postfix_transport_maps | length) > 0 else 'absent' }}"
     backup: true
   notify:
     - restart postfix
